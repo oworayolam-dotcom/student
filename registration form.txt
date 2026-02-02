@@ -1,0 +1,85 @@
+Import javafx.application.Application;
+Import javafx.scene.Scene;
+Import javafx.scene.control.*;
+Import javafx.scene.layout.*;
+Import javafx.stage.Stage;
+Import java.time.LocalDate;
+
+Public class StudentRegistration extends Application {
+    Private int counter = 1;
+
+    @Override
+    Public void start(Stage stage) {
+        TextField firstName = new TextField();
+        TextField lastName = new TextField();
+        TextField email = new TextField();
+        TextField confirmEmail = new TextField();
+        PasswordField password = new PasswordField();
+        PasswordField confirmPassword = new PasswordField();
+
+        ComboBox<Integer> year = new ComboBox<>();
+        ComboBox<String> month = new ComboBox<>();
+        ComboBox<Integer> day = new ComboBox<>();
+
+        Year.getItems().addAll(1966, 1967, …, 2010); // fill range
+        Month.getItems().addAll(“Jan”,”Feb”,”Mar”,”Apr”,”May”,”Jun”,”Jul”,”Aug”,”Sep”,”Oct”,”Nov”,”Dec”);
+
+        ToggleGroup genderGroup = new ToggleGroup();
+        RadioButton male = new RadioButton(“Male”);
+        RadioButton female = new RadioButton(“Female”);
+        Male.setToggleGroup(genderGroup);
+        Female.setToggleGroup(genderGroup);
+
+        ToggleGroup deptGroup = new ToggleGroup();
+        RadioButton cse = new RadioButton(“Computer Science and Engineering”);
+        RadioButton mech = new RadioButton(“Mechanical”);
+        Cse.setToggleGroup(deptGroup);
+        Mech.setToggleGroup(deptGroup);
+
+        TextArea output = new TextArea();
+        Output.setEditable(false);
+
+        Button submit = new Button(“Submit”);
+        Submit.setOnAction(e -> {
+            // Validation
+            If (!email.getText().equals(confirmEmail.getText())) {
+                Output.setText(“Emails do not match!”);
+                Return;
+            }
+            If (!password.getText().equals(confirmPassword.getText())) {
+                Output.setText(“Passwords do not match!”);
+                Return;
+            }
+            LocalDate dob = LocalDate.of(year.getValue(), month.getSelectionModel().getSelectedIndex()+1, day.getValue());
+            Int age = LocalDate.now().getYear() – dob.getYear();
+            If (age < 16 || age > 60) {
+                Output.setText(“Age must be between 16 and 60!”);
+                Return;
+            }
+
+            String id = LocalDate.now().getYear() + “-“ + String.format(“%05d”, counter++);
+            String record = “ID: “ + id + “ | “ + firstName.getText() + “ “ + lastName.getText() +
+                    “ | “ + ((male.isSelected()) ? “M” : “F”) +
+                    “ | “ + (cse.isSelected() ? “CSE” : “MECH”) +
+                    “ | “ + dob + “ | “ + email.getText();
+
+            Output.setText(record);
+            // Append to CSV (pseudo-code)
+            // Files.write(Paths.get(“students.csv”), record.getBytes(), StandardOpenOption.APPEND);
+        });
+
+        VBox root = new VBox(10, firstName, lastName, email, confirmEmail, password, confirmPassword,
+                Year, month, day, male, female, cse, mech, submit, output);
+
+        Stage.setScene(new Scene(root, 400, 600));
+        Stage.setTitle(“Student Registration Form”);
+        Stage.show();
+    }
+
+    Public static void main(String[] args) {
+        Launch();
+    }
+}
+`
+
+
