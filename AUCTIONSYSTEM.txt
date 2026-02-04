@@ -1,0 +1,176 @@
+import java.util.Scanner;
+
+/**
+ * SK Motors Auction System
+ * Handles vehicle auction bidding and profit/loss calculation
+ */
+public class SKMotorsAuction {
+    
+    // Vehicle class to store vehicle information
+    static class Vehicle {
+        private String vehicleName;
+        private double purchasePrice;
+        private double totalExpenses;
+        private double sellingPrice;
+        
+        public Vehicle(String vehicleName, double purchasePrice) {
+            this.vehicleName = vehicleName;
+            this.purchasePrice = purchasePrice;
+            this.totalExpenses = 0.0;
+            this.sellingPrice = 0.0;
+        }
+        
+        public void addExpense(double expense) {
+            this.totalExpenses += expense;
+        }
+        
+        public void setSellingPrice(double price) {
+            this.sellingPrice = price;
+        }
+        
+        public double calculateProfitOrLoss() {
+            return sellingPrice - (purchasePrice + totalExpenses);
+        }
+        
+        public String getVehicleName() {
+            return vehicleName;
+        }
+        
+        public double getPurchasePrice() {
+            return purchasePrice;
+        }
+        
+        public double getTotalExpenses() {
+            return totalExpenses;
+        }
+        
+        public double getSellingPrice() {
+            return sellingPrice;
+        }
+        
+        public void displayFinancialSummary() {
+            System.out.println("\n========================================");
+            System.out.println("     FINANCIAL SUMMARY");
+            System.out.println("========================================");
+            System.out.println("Vehicle: " + vehicleName);
+            System.out.println("Purchase Price: $" + String.format("%.2f", purchasePrice));
+            System.out.println("Total Expenses: $" + String.format("%.2f", totalExpenses));
+            System.out.println("----------------------------------------");
+            System.out.println("Total Cost: $" + String.format("%.2f", (purchasePrice + totalExpenses)));
+            System.out.println("Selling Price: $" + String.format("%.2f", sellingPrice));
+            System.out.println("----------------------------------------");
+            
+            double profitOrLoss = calculateProfitOrLoss();
+            if (profitOrLoss > 0) {
+                System.out.println("PROFIT: $" + String.format("%.2f", profitOrLoss));
+            } else if (profitOrLoss < 0) {
+                System.out.println("LOSS: $" + String.format("%.2f", Math.abs(profitOrLoss)));
+            } else {
+                System.out.println("BREAK EVEN: $0.00");
+            }
+            System.out.println("========================================\n");
+        }
+    }
+    
+    // Bidder class to store bidder information
+    static class Bidder {
+        private String name;
+        private double bidAmount;
+        
+        public Bidder(String name, double bidAmount) {
+            this.name = name;
+            this.bidAmount = bidAmount;
+        }
+        
+        public String getName() {
+            return name;
+        }
+        
+        public double getBidAmount() {
+            return bidAmount;
+        }
+    }
+    
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        
+        System.out.println("========================================");
+        System.out.println("   SK MOTORS - AUCTION SYSTEM");
+        System.out.println("========================================\n");
+        
+        // Step 1: Get vehicle information
+        System.out.print("Enter vehicle name/model: ");
+        String vehicleName = scanner.nextLine();
+        
+        System.out.print("Enter vehicle purchase price: $");
+        double purchasePrice = scanner.nextDouble();
+        
+        Vehicle vehicle = new Vehicle(vehicleName, purchasePrice);
+        
+        // Step 2: Record expenses
+        System.out.print("\nHow many expenses were incurred on this vehicle? ");
+        int expenseCount = scanner.nextInt();
+        
+        for (int i = 1; i <= expenseCount; i++) {
+            System.out.print("Enter expense #" + i + " amount: $");
+            double expense = scanner.nextDouble();
+            vehicle.addExpense(expense);
+        }
+        
+        System.out.println("\nTotal expenses recorded: $" + 
+                         String.format("%.2f", vehicle.getTotalExpenses()));
+        
+        // Step 3: Conduct auction with 3 bidders
+        System.out.println("\n========================================");
+        System.out.println("     AUCTION PROCESS");
+        System.out.println("========================================");
+        
+        Bidder[] bidders = new Bidder[3];
+        scanner.nextLine(); // Clear buffer
+        
+        for (int i = 0; i < 3; i++) {
+            System.out.println("\nBidder #" + (i + 1) + ":");
+            System.out.print("Enter bidder name: ");
+            String bidderName = scanner.nextLine();
+            
+            System.out.print("Enter bid amount: $");
+            double bidAmount = scanner.nextDouble();
+            scanner.nextLine(); // Clear buffer
+            
+            bidders[i] = new Bidder(bidderName, bidAmount);
+        }
+        
+        // Step 4: Determine highest bidder
+        Bidder highestBidder = bidders[0];
+        for (int i = 1; i < bidders.length; i++) {
+            if (bidders[i].getBidAmount() > highestBidder.getBidAmount()) {
+                highestBidder = bidders[i];
+            }
+        }
+        
+        // Set the selling price to the highest bid
+        vehicle.setSellingPrice(highestBidder.getBidAmount());
+        
+        // Step 5: Display all bids
+        System.out.println("\n========================================");
+        System.out.println("     ALL BIDS RECEIVED");
+        System.out.println("========================================");
+        for (int i = 0; i < bidders.length; i++) {
+            System.out.println("Bidder " + (i + 1) + ": " + bidders[i].getName() + 
+                             " - $" + String.format("%.2f", bidders[i].getBidAmount()));
+        }
+        
+        // Step 6: Announce winner
+        System.out.println("\n========================================");
+        System.out.println("     AUCTION RESULT");
+        System.out.println("========================================");
+        System.out.println("WINNER: " + highestBidder.getName());
+        System.out.println("WINNING BID: $" + String.format("%.2f", highestBidder.getBidAmount()));
+        System.out.println("========================================");
+        
+        // Step 7: Display financial summary
+        vehicle.displayFinancialSummary();
+        
+        scanner.close();
+    }
+}
